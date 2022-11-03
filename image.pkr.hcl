@@ -40,7 +40,7 @@ source "amazon-ebs" "amd64" {
   ami_name              = var.ami-name == "" ? "${var.ami-prefix}-amd64-${local.timestamp}" : "${var.ami-name}-amd64"
   instance_type         = "c6i.large"
   region                = "us-east-1"
-  ssh_username          = "ec2-user"
+  ssh_username          = "ubuntu"
   force_deregister      = true
   force_delete_snapshot = true
   // ami_groups            = ["all"]
