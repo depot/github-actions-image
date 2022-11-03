@@ -20,7 +20,7 @@ locals {
   helper_script_folder ="/imagegeneration/helpers"
   image_folder = "/imagegeneration"
   image_os = "ubuntu20"
-  image_version = "dev"
+  image_version = "20221027.1"
   imagedata_file = "/imagegeneration/imagedata.json"
   installer_script_folder = "/imagegeneration/installers"
   run_validation_diskspace = "false"
@@ -332,26 +332,26 @@ build {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
   }
 
-  provisioner "shell" {
-    max_retries         = 3
-    start_retry_timeout = "2m"
-    inline = [
-      "pwsh -Command Write-Host Running SoftwareReport.Generator.ps1 script",
-      "pwsh -File ${local.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${local.image_folder}",
-      "pwsh -Command Write-Host Running RunAll-Tests.ps1 script",
-      "pwsh -File ${local.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${local.image_folder}"
-    ]
-    environment_vars = [
-      "IMAGE_VERSION=${local.image_version}",
-      "INSTALLER_SCRIPT_FOLDER=${local.installer_script_folder}"
-    ]
-  }
+  // provisioner "shell" {
+  //   max_retries         = 3
+  //   start_retry_timeout = "2m"
+  //   inline = [
+  //     "pwsh -Command Write-Host Running SoftwareReport.Generator.ps1 script",
+  //     "pwsh -File ${local.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${local.image_folder}",
+  //     "pwsh -Command Write-Host Running RunAll-Tests.ps1 script",
+  //     "pwsh -File ${local.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${local.image_folder}"
+  //   ]
+  //   environment_vars = [
+  //     "IMAGE_VERSION=${local.image_version}",
+  //     "INSTALLER_SCRIPT_FOLDER=${local.installer_script_folder}"
+  //   ]
+  // }
 
-  provisioner "file" {
-    source      = "${local.image_folder}/Ubuntu-Readme.md"
-    destination = "${local.template_dir}/Ubuntu2004-Readme.md"
-    direction   = "download"
-  }
+  // provisioner "file" {
+  //   source      = "${local.image_folder}/Ubuntu-Readme.md"
+  //   destination = "${local.template_dir}/Ubuntu2004-Readme.md"
+  //   direction   = "download"
+  // }
 
   provisioner "shell" {
     scripts = ["${local.template_dir}/scripts/installers/post-deployment.sh"]
@@ -384,7 +384,8 @@ build {
   provisioner "shell" {
     inline = [
       "sleep 30",
-      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      "export HISTSIZE=0 && sync"
+      // "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ]
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
   }
