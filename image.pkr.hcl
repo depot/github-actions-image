@@ -10,6 +10,7 @@ variable "ami-prefix" {
 
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+  runner_version = "2.299.1"
 
   name = var.ami-name == "" ? "${var.ami-prefix}-${local.timestamp}" : var.ami-name
 }
@@ -363,6 +364,17 @@ build {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
   }
 
+  # Depot-specific provisioning
+  provisioner "shell" {
+    scripts = ["${path.root}/scripts/provision-user.sh"]
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  }
+  provisioner "shell" {
+    scripts = ["${path.root}/scripts/install-runner.sh"]
+    environment_vars = ["RUNNER_VERSION=${local.runner_version}"]
+    execute_command = "sudo -u runner sh -c '{{ .Vars }} {{ .Path }}'"
+  }
+
   provisioner "shell" {
     scripts          = ["${local.template_dir}/scripts/installers/validate-disk-space.sh"]
     environment_vars = ["RUN_VALIDATION=${local.run_validation_diskspace}"]
@@ -384,8 +396,9 @@ build {
   provisioner "shell" {
     inline = [
       "sleep 30",
+      "userdel -fr ubuntu || echo \"Suppressing userdel exit $?\"",
+      "groupdel ubuntu || echo \"Suppressing groupdel exit $?\"",
       "export HISTSIZE=0 && sync"
-      // "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ]
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
   }
