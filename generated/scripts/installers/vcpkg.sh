@@ -8,6 +8,10 @@
 VCPKG_INSTALLATION_ROOT=/usr/local/share/vcpkg
 echo "VCPKG_INSTALLATION_ROOT=${VCPKG_INSTALLATION_ROOT}" | tee -a /etc/environment
 
+# Create missing directories
+mkdir -p "$HOME/.vcpkg"
+touch "$HOME/.vcpkg/vcpkg.path.txt"
+
 # Install vcpkg
 git clone https://github.com/Microsoft/vcpkg $VCPKG_INSTALLATION_ROOT
 

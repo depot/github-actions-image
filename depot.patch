@@ -14,3 +14,24 @@ diff -uraN upstream/images/linux/scripts/installers/configure-environment.sh gen
  
  # Add localhost alias to ::1 IPv6
  sed -i 's/::1 ip6-localhost ip6-loopback/::1     localhost ip6-localhost ip6-loopback/g' /etc/hosts
+diff -uraN upstream/images/linux/scripts/installers/vcpkg.sh generated/scripts/installers/vcpkg.sh
+--- upstream/images/linux/scripts/installers/vcpkg.sh	2022-11-03 11:29:31
++++ generated/scripts/installers/vcpkg.sh	2022-11-15 14:21:08
+@@ -8,6 +8,10 @@
+ VCPKG_INSTALLATION_ROOT=/usr/local/share/vcpkg
+ echo "VCPKG_INSTALLATION_ROOT=${VCPKG_INSTALLATION_ROOT}" | tee -a /etc/environment
+ 
++# Create missing directories
++mkdir -p "$HOME/.vcpkg"
++touch "$HOME/.vcpkg/vcpkg.path.txt"
++
+ # Install vcpkg
+ git clone https://github.com/Microsoft/vcpkg $VCPKG_INSTALLATION_ROOT
+ 
+@@ -16,4 +20,4 @@
+ chmod 0777 -R $VCPKG_INSTALLATION_ROOT
+ ln -sf $VCPKG_INSTALLATION_ROOT/vcpkg /usr/local/bin
+ 
+-invoke_tests "Tools" "Vcpkg"
+\ No newline at end of file
++invoke_tests "Tools" "Vcpkg"

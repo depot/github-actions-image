@@ -3,7 +3,7 @@ build: apply-patch
 
 .PHONY: generate-patch
 generate-patch:
-	diff -uraN upstream/images/linux generated > depot.patch
+	diff -uraN upstream/images/linux generated > depot.patch || true
 
 .PHONY: apply-patch
 apply-patch:
